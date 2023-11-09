@@ -1,6 +1,4 @@
 import tensorflow as tf
-from transformer_modules import FeedForward
-from attention import GlobalSelfAttention, RelationalAttention
 from abstracters import RelationalAbstracterLayer
 
 # TODO: decide on how to integrate this into code-base and name of module
@@ -8,7 +6,7 @@ from abstracters import RelationalAbstracterLayer
 
 class SymbolRetrievingAbstractor(tf.keras.layers.Layer):
     """
-    An implementation of the Abstractor 2.0 module.
+    An implementation of the Symbol-Retrieving Abstractor module.
 
     1) Retrieve symbols
     2) Relational cross-attention
@@ -20,7 +18,8 @@ class SymbolRetrievingAbstractor(tf.keras.layers.Layer):
         num_heads,
         dff,
         n_symbols,
-        binding_dim,
+        symbol_n_heads=1,
+        symbol_binding_dim=None,
         rel_activation_function='softmax',
         use_self_attn=True,
         dropout_rate=0.1,
@@ -56,7 +55,8 @@ class SymbolRetrievingAbstractor(tf.keras.layers.Layer):
         self.num_heads = num_heads
         self.dff = dff
         self.n_symbols = n_symbols
-        self.binding_dim = binding_dim
+        self.symbol_n_heads = symbol_n_heads
+        self.symbol_binding_dim = symbol_binding_dim
         self.rel_activation_function = rel_activation_function
         self.use_self_attn = use_self_attn
         self.dropout_rate = dropout_rate
@@ -69,7 +69,9 @@ class SymbolRetrievingAbstractor(tf.keras.layers.Layer):
 
         _, self.sequence_length, self.d_model = input_shape
 
-        self.symbol_retrieval = SymbolRetrieval(self.n_symbols, self.d_model, self.binding_dim)
+        self.symbol_retrieval = MultiHeadSymbolRetriever(
+            n_heads=self.symbol_n_heads, n_symbols=self.n_symbols,
+            symbol_dim=self.d_model, binding_dim=self.symbol_binding_dim)
 
         self.dropout = tf.keras.layers.Dropout(self.dropout_rate)
 
@@ -92,13 +94,14 @@ class SymbolRetrievingAbstractor(tf.keras.layers.Layer):
 
         return symbol_seq
 
-class SymbolRetrieval(tf.keras.layers.Layer):
-    def __init__(self, n_symbols, symbol_dim, binding_dim, symbol_initializer='random_normal'):
-        super(SymbolRetrieval, self).__init__()
+class SymbolRetriever(tf.keras.layers.Layer):
+    def __init__(self, n_symbols, symbol_dim, binding_dim=None, use_bias=False, symbol_initializer='random_normal', **kwargs):
+        super(SymbolRetriever, self).__init__(**kwargs)
 
         self.n_symbols = n_symbols
         self.symbol_dim = symbol_dim
-        self.binding_dim = binding_dim
+        self.binding_dim = binding_dim if binding_dim is not None else symbol_dim
+        self.use_bias = use_bias
         self.symbol_initializer = symbol_initializer
 
     def build(self, input_shape):
@@ -112,11 +115,38 @@ class SymbolRetrieval(tf.keras.layers.Layer):
             shape=(self.n_symbols, self.binding_dim),
             initializer=self.symbol_initializer,
             trainable=True)
-        self.key_mapping = tf.keras.layers.Dense(self.binding_dim, use_bias=False)
+        self.query_mapping = tf.keras.layers.Dense(self.binding_dim, use_bias=self.use_bias, name='query_mapping')
 
     def call(self, inputs):
-        input_keys = self.key_mapping(inputs)
+        input_keys = self.query_mapping(inputs)
         binding_matrix = tf.einsum('bik,jk->bij', input_keys, self.binding)
         normalized_binding_matrix = tf.nn.softmax(binding_matrix, axis=-1)
         retrieved_symbols = tf.einsum('bij,jk->bik', normalized_binding_matrix, self.symbols)
+        return retrieved_symbols
+
+class MultiHeadSymbolRetriever(tf.keras.layers.Layer):
+    def __init__(self, n_heads, n_symbols, symbol_dim, binding_dim=None, symbol_initializer='random_normal', **kwargs):
+        super(MultiHeadSymbolRetriever, self).__init__(**kwargs)
+
+        self.n_heads = n_heads
+        self.n_symbols = n_symbols
+        self.symbol_dim = symbol_dim
+        self.binding_dim = binding_dim
+        self.symbol_initializer = symbol_initializer
+        if symbol_dim % n_heads != 0:
+            raise ValueError(f'symbol_dim ({symbol_dim}) must be divisible by num_heads ({n_heads})')
+
+    def build(self, input_shape):
+        self.symbol_retrievers = [
+            SymbolRetriever(
+                n_symbols=self.n_symbols, symbol_dim=self.symbol_dim // self.n_heads,
+                binding_dim=self.binding_dim, symbol_initializer=self.symbol_initializer,
+                name=f'symbol_retriever_h{i}')
+            for i in range(self.n_heads)]
+
+    def call(self, inputs):
+        retrieved_symbols = tf.concat([
+            self.symbol_retrievers[i](inputs)
+            for i in range(self.n_heads)
+        ], axis=-1)
         return retrieved_symbols
