@@ -95,7 +95,7 @@ class SymbolRetrievingAbstractor(tf.keras.layers.Layer):
         return symbol_seq
 
 class SymbolRetriever(tf.keras.layers.Layer):
-    def __init__(self, n_symbols, symbol_dim, binding_dim=None, use_bias=False, symbol_initializer='random_normal', **kwargs):
+    def __init__(self, n_symbols, symbol_dim, binding_dim=None, use_bias=False, softmax_scaler=None, symbol_initializer='random_normal', **kwargs):
         super(SymbolRetriever, self).__init__(**kwargs)
 
         self.n_symbols = n_symbols
@@ -103,6 +103,7 @@ class SymbolRetriever(tf.keras.layers.Layer):
         self.binding_dim = binding_dim if binding_dim is not None else symbol_dim
         self.use_bias = use_bias
         self.symbol_initializer = symbol_initializer
+        self.softmax_scaler = softmax_scaler if softmax_scaler is not None else 1/np.sqrt(binding_dim)
 
     def build(self, input_shape):
         self.symbols = self.add_weight(
@@ -120,7 +121,7 @@ class SymbolRetriever(tf.keras.layers.Layer):
     def call(self, inputs):
         input_keys = self.query_mapping(inputs)
         binding_matrix = tf.einsum('bik,jk->bij', input_keys, self.binding)
-        normalized_binding_matrix = tf.nn.softmax(binding_matrix, axis=-1)
+        normalized_binding_matrix = tf.nn.softmax(self.softmax_scaler * binding_matrix, axis=-1)
         retrieved_symbols = tf.einsum('bij,jk->bik', normalized_binding_matrix, self.symbols)
         return retrieved_symbols
 
