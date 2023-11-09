@@ -3,6 +3,7 @@ from tensorflow.keras import layers
 from transformer_modules import Encoder, AddPositionalEmbedding
 from multi_attention_decoder import MultiAttentionDecoder
 from abstractor import Abstractor
+from symbol_retrieving_abstractor import SymbolRetrievingAbstractor
 from abstracters import RelationalAbstracter, SymbolicAbstracter
 
 class AutoregressiveAbstractor(tf.keras.Model):
@@ -23,7 +24,7 @@ class AutoregressiveAbstractor(tf.keras.Model):
             target_vocab,
             embedding_dim,
             output_dim,
-            abstractor_type='relational', # 'abstractor', 'simple', 'relational', or 'symbolic'
+            abstractor_type='relational', # 'abstractor', 'simple', 'relational', or 'symbolic' or 'symbol-retrieving'
             abstractor_on='input', # 'input' or 'encoder'
             decoder_on='abstractor', # 'abstractor' or 'encoder-abstractor'
             name=None):
@@ -103,6 +104,8 @@ class AutoregressiveAbstractor(tf.keras.Model):
             self.abstractor = Abstractor(**abstractor_kwargs, name='abstractor')
         elif abstractor_type == 'relational':
             self.abstractor = RelationalAbstracter(**abstractor_kwargs, name='abstractor')
+        elif abstractor_type == 'symbol-retrieving':
+            self.abstractor = SymbolRetrievingAbstractor(**abstractor_kwargs, name='abstractor')
         elif abstractor_type == 'symbolic':
             self.abstractor = SymbolicAbstracter(**abstractor_kwargs, name='abstractor')
         else:
