@@ -182,9 +182,10 @@ def create_symbolretrieving_abstractor(input_vocab_size, target_vocab_size, size
 
     encoder_kwargs = dict(num_layers=num_layers, num_heads=num_heads, dff=dff, dropout_rate=0.1,)
     decoder_kwargs = dict(num_layers=num_layers, num_heads=num_heads, dff=dff, dropout_rate=0.1,)
-    abstractor_kwargs = dict(num_layers=num_layers, num_heads=num_heads, dff=dff,
-        n_symbols=256, binding_dim=d_model, rel_activation_function='softmax', use_self_attn=True,
-        dropout_rate=0.1)
+    abstractor_kwargs = dict(
+        num_layers=num_layers, num_heads=num_heads, dff=dff,
+        n_symbols=256, symbol_n_heads=num_heads, rel_activation_function='softmax',
+        use_self_attn=True, dropout_rate=0.1)
 
     abstractor = AutoregressiveAbstractor(
         encoder_kwargs,
@@ -200,6 +201,8 @@ def create_symbolretrieving_abstractor(input_vocab_size, target_vocab_size, size
         name='autoregressive_abstractor')
     return abstractor
 #endregion
+
+# TODO: what to do with tfm implementations? remove? delete?
 
 #region TFM-Abstractor
 def create_tfm_abstractor(input_vocab_size, target_vocab_size, size='x-large'):
