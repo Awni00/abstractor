@@ -368,8 +368,8 @@ model_creator_dict = dict(
     tfm_relational_abstractor2=create_tfm_relational_abstractor2,
     tfm_linear_relational_abstractor=create_tfm_relational_abstractor,
     tfm_compisitional_abstractor=create_tfm_compisitional_abstractor,
-    abstractor2=create_abstractor2,
     relational_abstractor=create_relational_abstractor,
+    symbolretrieving_abstractor=create_symbolretrieving_abstractor,
     linear_relational_abstractor=create_linear_relational_abstractor,
     relational_abstractor2=create_relational_abstractor2
     )
