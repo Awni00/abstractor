@@ -147,18 +147,18 @@ class RelationalAbstracterLayer(tf.keras.layers.Layer):
     if dff is not None:
         self.ffn = FeedForward(d_model, dff)
 
-  def call(self, x, context):
+  def call(self, symbols, objects):
     if self.use_self_attn:
-        x = self.self_attention(x=x)
-    x = self.relational_crossattention(x=x, context=context)
+        symbols = self.self_attention(symbols)
+    symbols = self.relational_crossattention(symbols=symbols, inputs=objects)
 
     # Cache the last attention scores for plotting later
     self.last_attn_scores = self.relational_crossattention.last_attn_scores
 
     if self.dff is not None:
-        x = self.ffn(x)  # Shape `(batch_size, seq_len, d_model)`.
+        symbols = self.ffn(symbols)  # Shape `(batch_size, seq_len, d_model)`.
 
-    return x
+    return symbols
 
 class SymbolicAbstracter(tf.keras.layers.Layer):
     """
