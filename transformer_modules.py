@@ -4,6 +4,8 @@ import numpy as np
 import tensorflow as tf
 from attention import GlobalSelfAttention, CausalSelfAttention, CrossAttention
 
+# TODO: bring implementation of layernorm_first here?
+
 class Encoder(tf.keras.layers.Layer):
     def __init__(self, num_layers, num_heads, dff, dropout_rate=0.1, name="encoder"):
         super().__init__(name=name)
