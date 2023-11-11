@@ -184,8 +184,86 @@ def create_symbolretrieving_abstractor(input_vocab_size, target_vocab_size, size
     decoder_kwargs = dict(num_layers=num_layers, num_heads=num_heads, dff=dff, dropout_rate=0.1,)
     abstractor_kwargs = dict(
         num_layers=num_layers, num_heads=num_heads, dff=dff,
-        n_symbols=256, symbol_n_heads=num_heads, rel_activation_function='softmax',
-        use_self_attn=True, dropout_rate=0.1)
+        n_symbols=256, symbol_n_heads=num_heads, symbol_retriever_type=1,
+        rel_activation_function='softmax', use_self_attn=True, dropout_rate=0.1)
+
+    abstractor = AutoregressiveAbstractor(
+        encoder_kwargs,
+        abstractor_kwargs,
+        decoder_kwargs,
+        input_vocab=input_vocab_size,
+        target_vocab=target_vocab_size,
+        embedding_dim=d_model,
+        output_dim=target_vocab_size,
+        abstractor_type='symbol-retrieving', # 'abstractor', 'simple', 'relational', or 'symbolic'
+        abstractor_on='input', # 'input' or 'encoder'
+        decoder_on='encoder-abstractor', # 'abstractor' or 'encoder-abstractor'
+        name='autoregressive_abstractor')
+    return abstractor
+#endregion
+
+#region SymbolRetrievingAbstractor
+def create_symbolretrieving2_abstractor(input_vocab_size, target_vocab_size, size='x-large'):
+    d_model, num_heads, dff, num_layers = get_params_by_size(size)
+
+    encoder_kwargs = dict(num_layers=num_layers, num_heads=num_heads, dff=dff, dropout_rate=0.1,)
+    decoder_kwargs = dict(num_layers=num_layers, num_heads=num_heads, dff=dff, dropout_rate=0.1,)
+    abstractor_kwargs = dict(
+        num_layers=num_layers, num_heads=num_heads, dff=dff,
+        n_symbols=256, symbol_n_heads=num_heads, symbol_retriever_type=2,
+        rel_activation_function='softmax', use_self_attn=True, dropout_rate=0.1)
+
+    abstractor = AutoregressiveAbstractor(
+        encoder_kwargs,
+        abstractor_kwargs,
+        decoder_kwargs,
+        input_vocab=input_vocab_size,
+        target_vocab=target_vocab_size,
+        embedding_dim=d_model,
+        output_dim=target_vocab_size,
+        abstractor_type='symbol-retrieving', # 'abstractor', 'simple', 'relational', or 'symbolic'
+        abstractor_on='input', # 'input' or 'encoder'
+        decoder_on='encoder-abstractor', # 'abstractor' or 'encoder-abstractor'
+        name='autoregressive_abstractor')
+    return abstractor
+#endregion
+
+#region SymbolRetrievingAbstractor
+def create_symbolretrieving_singlehead_abstractor(input_vocab_size, target_vocab_size, size='x-large'):
+    d_model, num_heads, dff, num_layers = get_params_by_size(size)
+
+    encoder_kwargs = dict(num_layers=num_layers, num_heads=num_heads, dff=dff, dropout_rate=0.1,)
+    decoder_kwargs = dict(num_layers=num_layers, num_heads=num_heads, dff=dff, dropout_rate=0.1,)
+    abstractor_kwargs = dict(
+        num_layers=num_layers, num_heads=num_heads, dff=dff,
+        n_symbols=256, symbol_n_heads=1, symbol_retriever_type=1,
+        rel_activation_function='softmax', use_self_attn=True, dropout_rate=0.1)
+
+    abstractor = AutoregressiveAbstractor(
+        encoder_kwargs,
+        abstractor_kwargs,
+        decoder_kwargs,
+        input_vocab=input_vocab_size,
+        target_vocab=target_vocab_size,
+        embedding_dim=d_model,
+        output_dim=target_vocab_size,
+        abstractor_type='symbol-retrieving', # 'abstractor', 'simple', 'relational', or 'symbolic'
+        abstractor_on='input', # 'input' or 'encoder'
+        decoder_on='encoder-abstractor', # 'abstractor' or 'encoder-abstractor'
+        name='autoregressive_abstractor')
+    return abstractor
+#endregion
+
+#region SymbolRetrievingAbstractor
+def create_symbolretrieving2_singlehead_abstractor(input_vocab_size, target_vocab_size, size='x-large'):
+    d_model, num_heads, dff, num_layers = get_params_by_size(size)
+
+    encoder_kwargs = dict(num_layers=num_layers, num_heads=num_heads, dff=dff, dropout_rate=0.1,)
+    decoder_kwargs = dict(num_layers=num_layers, num_heads=1, dff=dff, dropout_rate=0.1,)
+    abstractor_kwargs = dict(
+        num_layers=num_layers, num_heads=num_heads, dff=dff,
+        n_symbols=256, symbol_n_heads=1, symbol_retriever_type=2,
+        rel_activation_function='softmax', use_self_attn=True, dropout_rate=0.1)
 
     abstractor = AutoregressiveAbstractor(
         encoder_kwargs,
@@ -370,6 +448,9 @@ model_creator_dict = dict(
     tfm_compisitional_abstractor=create_tfm_compisitional_abstractor,
     relational_abstractor=create_relational_abstractor,
     symbolretrieving_abstractor=create_symbolretrieving_abstractor,
+    symbolretrieving2_abstractor=create_symbolretrieving2_abstractor,
+    symbolretrieving_singlehead_abstractor=create_symbolretrieving_singlehead_abstractor,
+    symbolretrieving2_singlehead_abstractor=create_symbolretrieving2_singlehead_abstractor,s
     linear_relational_abstractor=create_linear_relational_abstractor,
     relational_abstractor2=create_relational_abstractor2
     )
