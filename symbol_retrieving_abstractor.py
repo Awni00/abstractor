@@ -23,6 +23,7 @@ class SymbolRetrievingAbstractor(tf.keras.layers.Layer):
         symbol_binding_dim=None,
         rel_activation_function='softmax',
         use_self_attn=True,
+        symbol_retriever_type=1, # NOTE / TODO TEMPORARY
         dropout_rate=0.1,
         **kwargs):
         """
@@ -60,6 +61,7 @@ class SymbolRetrievingAbstractor(tf.keras.layers.Layer):
         self.symbol_binding_dim = symbol_binding_dim
         self.rel_activation_function = rel_activation_function
         self.use_self_attn = use_self_attn
+        self.symbol_retriever_type = symbol_retriever_type
         self.dropout_rate = dropout_rate
 
         # NOTE: we choose symbol_dim to be the same as d_model
@@ -70,9 +72,14 @@ class SymbolRetrievingAbstractor(tf.keras.layers.Layer):
 
         _, self.sequence_length, self.d_model = input_shape
 
-        self.symbol_retrieval = MultiHeadSymbolRetriever(
-            n_heads=self.symbol_n_heads, n_symbols=self.n_symbols,
-            symbol_dim=self.d_model, binding_dim=self.symbol_binding_dim)
+        if self.symbol_retriever_type == 1:
+            self.symbol_retrieval = MultiHeadSymbolRetriever(
+                n_heads=self.symbol_n_heads, n_symbols=self.n_symbols,
+                symbol_dim=self.d_model, binding_dim=self.symbol_binding_dim)
+        elif self.symbol_retriever_type == 2:
+            self.symbol_retrieval = MultiHeadSymbolRetrieval2(
+                n_heads=self.symbol_n_heads, n_symbols=self.n_symbols,
+                symbol_dim=self.d_model, binding_dim=self.symbol_binding_dim)
 
         self.dropout = tf.keras.layers.Dropout(self.dropout_rate)
 
@@ -121,8 +128,11 @@ class SymbolRetriever(tf.keras.layers.Layer):
 
     def call(self, inputs):
         input_keys = self.query_mapping(inputs)
+
         binding_matrix = tf.einsum('bik,jk->bij', input_keys, self.binding)
         normalized_binding_matrix = tf.nn.softmax(self.softmax_scaler * binding_matrix, axis=-1)
+        self.last_attn_scores = normalized_binding_matrix
+
         retrieved_symbols = tf.einsum('bij,jk->bik', normalized_binding_matrix, self.symbols)
         return retrieved_symbols
 
@@ -151,4 +161,38 @@ class MultiHeadSymbolRetriever(tf.keras.layers.Layer):
             self.symbol_retrievers[i](inputs)
             for i in range(self.n_heads)
         ], axis=-1)
+        return retrieved_symbols
+
+# TODO: decide on symbol-retriever architecture and name
+class MultiHeadSymbolRetrieval2(tf.keras.layers.Layer):
+    def __init__(self, n_heads, n_symbols, symbol_dim, binding_dim=None, use_bias=False, symbol_initializer='random_normal', **kwargs):
+        super(MultiHeadSymbolRetrieval2, self).__init__(**kwargs)
+
+        self.n_heads = n_heads
+        self.n_symbols = n_symbols
+        self.symbol_dim = symbol_dim
+        self.binding_dim = binding_dim if binding_dim is not None else symbol_dim
+        self.use_bias = use_bias
+        self.symbol_initializer = symbol_initializer
+
+    def build(self, input_shape):
+        self.symbols = self.add_weight(
+            name='symbols',
+            shape=(self.n_symbols, self.symbol_dim),
+            initializer=self.symbol_initializer,
+            trainable=True)
+        self.binding = self.add_weight(
+            name='binding',
+            shape=(self.n_symbols, self.binding_dim),
+            initializer=self.symbol_initializer,
+            trainable=True)
+        self.symbol_mha = tf.keras.layers.MultiHeadAttention(
+            num_heads=self.n_heads, key_dim=self.binding_dim, use_bias=self.use_bias, name='symbolic_attention')
+
+    def call(self, inputs):
+        batch_size = tf.shape(inputs)[0]
+        symbol_library = tf.tile(tf.expand_dims(self.symbols, axis=0), [batch_size, 1, 1])
+        retrieved_symbols, symbol_attn_scores = self.symbol_mha(query=inputs, value=symbol_library, return_attention_scores=True)
+        self.last_attn_scores = symbol_attn_scores
+
         return retrieved_symbols
