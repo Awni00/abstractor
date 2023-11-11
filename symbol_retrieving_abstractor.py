@@ -111,7 +111,7 @@ class SymbolRetriever(tf.keras.layers.Layer):
         self.binding_dim = binding_dim if binding_dim is not None else symbol_dim
         self.use_bias = use_bias
         self.symbol_initializer = symbol_initializer
-        self.softmax_scaler = softmax_scaler if softmax_scaler is not None else 1/np.sqrt(binding_dim)
+        self.softmax_scaler = softmax_scaler if softmax_scaler is not None else 1/np.sqrt(self.binding_dim)
 
     def build(self, input_shape):
         self.symbols = self.add_weight(
