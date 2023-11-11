@@ -450,7 +450,7 @@ model_creator_dict = dict(
     symbolretrieving_abstractor=create_symbolretrieving_abstractor,
     symbolretrieving2_abstractor=create_symbolretrieving2_abstractor,
     symbolretrieving_singlehead_abstractor=create_symbolretrieving_singlehead_abstractor,
-    symbolretrieving2_singlehead_abstractor=create_symbolretrieving2_singlehead_abstractor,s
+    symbolretrieving2_singlehead_abstractor=create_symbolretrieving2_singlehead_abstractor,
     linear_relational_abstractor=create_linear_relational_abstractor,
     relational_abstractor2=create_relational_abstractor2
     )
