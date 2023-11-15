@@ -21,6 +21,7 @@ class SymbolRetrievingAbstractor(tf.keras.layers.Layer):
         n_symbols,
         symbol_n_heads=1,
         symbol_binding_dim=None,
+        add_pos_embedding=True,
         rel_activation_function='softmax',
         use_self_attn=True,
         symbol_retriever_type=1, # NOTE / TODO TEMPORARY
@@ -37,10 +38,12 @@ class SymbolRetrievingAbstractor(tf.keras.layers.Layer):
             dimension of intermediate layer in feedforward network
         n_symbols : int
             number of symbols
-        symbol_dim : int
-            dimension of symbols
-        binding_dim : int
-            dimension of binding symbols
+        symbol_n_heads : int, optional
+            number of heads in SymbolRetriever, by default 1
+        symbol_binding_dim : int, optional
+            dimension of binding symbols, by default None
+        add_pos_embedding : bool, optional
+            whether to add positional embeddings to symbols after retrieval, by default True
         rel_activation_function : str, optional
             activation of MHA in relational cross-attention, by default 'softmax'
         use_self_attn : bool, optional
@@ -59,6 +62,7 @@ class SymbolRetrievingAbstractor(tf.keras.layers.Layer):
         self.n_symbols = n_symbols
         self.symbol_n_heads = symbol_n_heads
         self.symbol_binding_dim = symbol_binding_dim
+        self.should_add_pos_embedding = add_pos_embedding
         self.rel_activation_function = rel_activation_function
         self.use_self_attn = use_self_attn
         self.symbol_retriever_type = symbol_retriever_type
@@ -69,6 +73,7 @@ class SymbolRetrievingAbstractor(tf.keras.layers.Layer):
         # TODO think about whether this should be adjusted...
 
     def build(self, input_shape):
+
 
         _, self.sequence_length, self.d_model = input_shape
 
@@ -81,6 +86,7 @@ class SymbolRetrievingAbstractor(tf.keras.layers.Layer):
                 n_heads=self.symbol_n_heads, n_symbols=self.n_symbols,
                 symbol_dim=self.d_model, binding_dim=self.symbol_binding_dim)
 
+        if self.should_add_pos_embedding: self.add_pos_embedding = AddPositionalEmbedding()
         self.dropout = tf.keras.layers.Dropout(self.dropout_rate)
 
         self.abstracter_layers = [
@@ -94,6 +100,8 @@ class SymbolRetrievingAbstractor(tf.keras.layers.Layer):
     def call(self, inputs):
 
         symbol_seq = self.symbol_retrieval(inputs) # retrieve symbols
+        if self.should_add_pos_embedding:
+            symbol_seq = self.add_pos_embedding(symbol_seq)
 
         symbol_seq = self.dropout(symbol_seq)
 
