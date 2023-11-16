@@ -211,7 +211,7 @@ def create_syntactic_abstractor(input_vocab_size, target_vocab_size, size='x-lar
     abstractor_kwargs = dict(num_layers=1, num_heads=num_heads, dff=dff, n_symbols=16,
         symbol_n_heads=1, symbol_binding_dim=None, add_pos_embedding=True, symbol_retriever_type=1)
 
-    model = AutoregressiveAbstractor(
+    abstractor = AutoregressiveAbstractor(
         encoder_kwargs,
         abstractor_kwargs,
         decoder_kwargs,
