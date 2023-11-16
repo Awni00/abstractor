@@ -1,5 +1,6 @@
 import tensorflow as tf
 from abstracters import RelationalAbstracterLayer
+from transformer_modules import AddPositionalEmbedding
 import numpy as np
 
 # TODO: decide on how to integrate this into code-base and name of module
