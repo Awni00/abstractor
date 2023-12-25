@@ -99,8 +99,9 @@ An extension of Transformers is proposed that enables explicit relational reason
 
 ## Method Overview
 
-The core operation in a Transformer is attention. For an input sequence $$X = (x_1, \ldots, x_n)$$, self-attention transforms the sequence via, $$ X' \gets \phi_v(X) \, \mathrm{Softmax}({\phi_q(X)}^\top \phi_k(X))$$, where $$\phi_q, \phi_k, \phi_v$$ are functions on $$\mathcal{X}$$ applied independently to each object in the sequence (i.e., $$\phi(X) = (\phi(x_1), \ldots, \phi(x_n))$$).
-We think of $$R := \phi_q(X)^\top \phi_k(X)$$ as a relation matrix. Self-attention admits an interpretation as a form of neural message-passing as follows, 
+The ability to infer, represent, and process relations lies at the heart of human abilities for abstraction---by representing the relations between different situations, we are able to draw connections and synthesize new ideas. The Transformer architecture has the ability to model relations between objects *implicitly* through its attention mechanisms. However, we argue that standard attention produces entangled representations encoding a mixture of relational information and object-level features. In this work we propose an extension of Transformers that enables explicit relational reasoning through a novel module called the *Abstractor* and a new variant of attention called *relational cross-attention*.
+
+The core operation in a Transformer is attention. For an input sequence $$X = (x_1, \ldots, x_n)$$, self-attention transforms the sequence via, $$ X' \gets \phi_v(X) \, \mathrm{Softmax}({\phi_q(X)}^\top \phi_k(X))$$, where $$\phi_q, \phi_k, \phi_v$$ are functions on $$\mathcal{X}$$ applied independently to each object in the sequence. We think of $$R := \phi_q(X)^\top \phi_k(X)$$ as a relation matrix. Self-attention admits an interpretation as a form of neural message-passing as follows, 
 
 $$x_i' \gets \mathrm{MessagePassing}\left(\{(\phi_v(x_j), R_{ij})\}_{j \in [n]}\right) = \sum_{j} \bar{R}_{ij} \phi_v(x_j).$$
 
@@ -120,16 +121,39 @@ Please see the paper for the details.
 
 ## Experiments
 
-We evaluate our proposed architecture on... . Please see the paper for a description of the tasks and the experimental set up. We include a preview of the results here.
+We evaluate our proposed architecture on a series of experiments involving both discriminative and generative tasks. We compare to a standard Transformer as well as to previous relational architectures. Please see the paper for a description of the tasks and the experimental set up. We include a preview of the results here.
 
-[TODO]
+**Discriminative Relational Tasks.** We begin our experimental evaluation with discriminative relational classification tasks---a setting where it is possible to compare to previously proposed relational architectures such as [PrediNet](https://arxiv.org/abs/1905.10307) and [CoRelNet](https://arxiv.org/abs/2206.05056). THe figure below compares sample-efficiency at two discriminative relational tasks: modeling transitive pairwise order in random objects and a task based on the [SET card game](https://www.wikiwand.com/en/Set_(card_game)). We find that explicitly relational architectures always outperform an MLP, with the Abstractor being the best-performing model on these tasks.
+<figure style="text-align: center;">
+    <img src="figs/pairwise_order_learning_curves.png" alt="..." style="width: 49%; display: inline-block;">
+    <img src="figs/set_classification.png" alt="..." style="width: 49%; display: inline-block;">
+    <figcaption style="text-align: left;">Figure: Learning curves on the discriminative relational tasks. Modeling transitive pairwise order in random objects (left) and a task based on the SET game (right).</figcaption>
+</figure>
+
+**Random Object Sorting.** Next, we evaluate a sequence-to-sequence relational task and compare to a standard Transformer. The task is to autoregressively predict the argsort of a sequence of randomly-generated objects. The underlying order relation must be learned from data in an end-to-end fashion. We observe the Abstractor-based model to be dramatically more sample-efficient at this task. Moreover, the Abstractor is able to generalize to new but similar tasks.
+<figure style="text-align: center;">
+    <img src="figs/random_object_sorting.png" alt="..." style="width: 49%; display: inline-block;">
+    <img src="figs/random_object_sorting_generalization.png" alt="..." style="width: 49%; display: inline-block;">
+    <figcaption style="text-align: left;">Figure: Learning curves on autoregressive object-sorting task (left) and learning curves after pre-training on a similar but different object-sorting task (right).</figcaption>
+</figure>
+
+
+**Mathematical Problem-Solving.** Finally, we evaluate the Abstractor on a sequence-to-sequence task which is more representative of the complexity of real-world tasks: solving mathematical problems. The mathematical problems includes the following tasks: differentiation (calculus), predicting the next term in a sequence (algebra), solving linear equations (algebra), expanding products of polynomials, and adding polynomials. We observe a consistent and notable improvement in performance and sample efficiency.
+
+<figure style="text-align: center;">
+    <img src="figs/math_training_curves.png" alt="Learning Curves of Mathematical Problem-Solving Tasks" style="width: 100%;">
+    <figcaption>Figure: Training curves on mathematical problem-solving tasks.</figcaption>
+</figure>
+
+Please see the paper for details on these experiments.
 
 ## Experiment Logs
 
 Detailed experimental logs are publicly available. They include training and validation metrics tracked during training, test metrics after training, code/git state, resource utilization, etc.
 
+**Object-sorting experiments.** Instructions for reproducing our experiments can be found at [`this readme in the project repo`](https://github.com/Awni00/abstractor/tree/main/experiments/object_argsort_autoregressive). The experimental logs for the object-sorting experiments can be found [`here`](https://wandb.ai/awni00/object_argsort_autoregressive?workspace=user-awni00).
 
-[TODO]
+**Math problem-solving.** Instructions for reproducing our experiments can be found at [`this readme in the project repo`](https://github.com/Awni00/abstractor/tree/main/experiments/math). The experimental logs for the each task in the math problem-solving experiments can be found here: [`calculus__differentiate`](https://wandb.ai/awni00/math-calculus__differentiate), [`algebra__sequence_next_term`](https://wandb.ai/awni00/math-algebra__sequence_next_term), [`algebra__linear_1d`](https://wandb.ai/awni00/math-algebra__linear_1d), [`polynomials__expand`](https://wandb.ai/awni00/math-polynomials__expand), and [`polynomials__add`](https://wandb.ai/awni00/math-polynomials__add).
 
 ## Citation
 
