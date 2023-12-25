@@ -88,8 +88,8 @@ Awni Altabaa<sup>1</sup>, Taylor Webb<sup>2</sup>, Jonathan Cohen<sup>3</sup>, J
 <br>
 
 <figure style="text-align: center;">
-    <img src="figs/self_attn_fig.png" alt="..." style="width: 49%; display: inline-block;">
-    <img src="figs/rel_crossattn_fig.png" alt="..." style="width: 49%; display: inline-block;">
+    <img src="figs/self_attn_fig.png" alt="depiction of self-attention" style="width: 49%; display: inline-block;">
+    <img src="figs/rel_crossattn_fig.png" alt="depiction of relational cross-attention" style="width: 49%; display: inline-block;">
     <figcaption style="text-align: left;">Figure: A depiction of relational cross-attention (right), compared with standard self-attention (left). Relational cross-attention implements a type of information bottleneck to disentangle object-level features from relational features. When integrated into a broader Transformer-based architecture, this enables explicit relational representation, yielding improved abstraction and generalization from limited data.</figcaption>
 </figure>
 
@@ -125,15 +125,15 @@ We evaluate our proposed architecture on a series of experiments involving both 
 
 **Discriminative Relational Tasks.** We begin our experimental evaluation with discriminative relational classification tasks---a setting where it is possible to compare to previously proposed relational architectures such as [PrediNet](https://arxiv.org/abs/1905.10307) and [CoRelNet](https://arxiv.org/abs/2206.05056). THe figure below compares sample-efficiency at two discriminative relational tasks: modeling transitive pairwise order in random objects and a task based on the [SET card game](https://www.wikiwand.com/en/Set_(card_game)). We find that explicitly relational architectures always outperform an MLP, with the Abstractor being the best-performing model on these tasks.
 <figure style="text-align: center;">
-    <img src="figs/pairwise_order_learning_curves.png" alt="..." style="width: 49%; display: inline-block;">
-    <img src="figs/set_classification.png" alt="..." style="width: 49%; display: inline-block;">
+    <img src="figs/pairwise_order_learning_curves.png" alt="learning curves of pairwise order discriminative task" style="width: 49%; display: inline-block;">
+    <img src="figs/set_classification.png" alt="learning curves on SET game classification task" style="width: 49%; display: inline-block;">
     <figcaption style="text-align: left;">Figure: Learning curves on the discriminative relational tasks. Modeling transitive pairwise order in random objects (left) and a task based on the SET game (right).</figcaption>
 </figure>
 
 **Random Object Sorting.** Next, we evaluate a sequence-to-sequence relational task and compare to a standard Transformer. The task is to autoregressively predict the argsort of a sequence of randomly-generated objects. The underlying order relation must be learned from data in an end-to-end fashion. We observe the Abstractor-based model to be dramatically more sample-efficient at this task. Moreover, the Abstractor is able to generalize to new but similar tasks.
 <figure style="text-align: center;">
-    <img src="figs/random_object_sorting.png" alt="..." style="width: 49%; display: inline-block;">
-    <img src="figs/random_object_sorting_generalization.png" alt="..." style="width: 49%; display: inline-block;">
+    <img src="figs/random_object_sorting.png" alt="learning curves for object-sorting experiments" style="width: 49%; display: inline-block;">
+    <img src="figs/random_object_sorting_generalization.png" alt="learning curves for object-sorting experiments after pre-training on related task" style="width: 49%; display: inline-block;">
     <figcaption style="text-align: left;">Figure: Learning curves on autoregressive object-sorting task (left) and learning curves after pre-training on a similar but different object-sorting task (right).</figcaption>
 </figure>
 
