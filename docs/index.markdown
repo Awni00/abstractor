@@ -88,29 +88,48 @@ Awni Altabaa<sup>1</sup>, Taylor Webb<sup>2</sup>, Jonathan Cohen<sup>3</sup>, J
 <br>
 
 <figure style="text-align: center;">
-    <!-- <img src="figs/....png" alt="..."> -->
-    <figcaption>Figure: A depiction of .</figcaption>
+    <img src="figs/self_attn_fig.png" alt="..." style="width: 49%; display: inline-block;">
+    <img src="figs/rel_crossattn_fig.png" alt="..." style="width: 49%; display: inline-block;">
+    <figcaption style="text-align: left;">Figure: A depiction of relational cross-attention (right), compared with standard self-attention (left). Relational cross-attention implements a type of information bottleneck to disentangle object-level features from relational features. When integrated into a broader Transformer-based architecture, this enables explicit relational representation, yielding improved abstraction and generalization from limited data.</figcaption>
 </figure>
 
 ## Abstract
 
+An extension of Transformers is proposed that enables explicit relational reasoning through a novel module called the *Abstractor*. At the core of the Abstractor is a variant of attention called *relational cross-attention*. The approach is motivated by an architectural inductive bias for relational learning that disentangles relational information from extraneous features about individual objects. This enables explicit relational reasoning, supporting abstraction and generalization from limited data. The Abstractor is first evaluated on simple discriminative relational tasks and compared to existing relational architectures. Next, the Abstractor is evaluated on purely relational sequence-to-sequence tasks, where dramatic improvements are seen in sample efficiency compared to standard Transformers. Finally, Abstractors are evaluated on a collection of tasks based on mathematical problem solving, where modest but consistent improvements in performance and sample efficiency are observed.
 
 ## Method Overview
 
-...
+The core operation in a Transformer is attention. For an input sequence $$X = (x_1, \ldots, x_n)$$, self-attention transforms the sequence via, $$ X' \gets \phi_v(X) \, \mathrm{Softmax}({\phi_q(X)}^\top \phi_k(X))$$, where $$\phi_q, \phi_k, \phi_v$$ are functions on $$\mathcal{X}$$ applied independently to each object in the sequence (i.e., $$\phi(X) = (\phi(x_1), \ldots, \phi(x_n))$$).
+We think of $$R := \phi_q(X)^\top \phi_k(X)$$ as a relation matrix. Self-attention admits an interpretation as a form of neural message-passing as follows, 
 
-Please see the paper for more details on the proposed architecture.
+$$x_i' \gets \mathrm{MessagePassing}\left(\{(\phi_v(x_j), R_{ij})\}_{j \in [n]}\right) = \sum_{j} \bar{R}_{ij} \phi_v(x_j).$$
 
+where $$m_{j \to i} = (\phi_v(x_j), R_{ij})$$ is the message from object $$j$$ to object $$i$$, encoding the sender's features and the relation between the two objects, and $$\bar{R} = \mathrm{Softmax}(R)$$ is the softmax-normalized relation matrix. Hence, the processed representation obtained by self-attention is an entangled mixture of relational information and object-level features.
+
+Our goal is to learn relational representations which are abstracted away from object-level features in order to achieve more sample-efficient learning and improved generalization in relational reasoning. This is not naturally supported by the entangled representations produced by standard self-attention. We achieve this via a simple modification of attention---we replace the values $$\phi_v(x_i)$$ with vectors that *identify* objects, but do not encode any information about their features. We call those vectors *symbols*. Hence, the message sent from object $$j$$ to object $$i$$ is now $$m_{j \to i} = (s_j, R_{ij})$$, the relation between the two objects, together with with the symbol identifying the sender object,
+
+$$A_i \gets \mathrm{MessagePassing}\left(\{(s_j, R_{ij})\}_{j \in [n]}\right)$$
+
+Symbols act as abstract references to objects. They do not contain any information about the contents or features of the objects, but rather *refer* to objects.
+
+Abstraction relies on the assignment of symbols to individual objects without directly encoding their features. We propose three different mechanisms for assigning symbols to objects: *positional symbols* (symbols are assigned to objects sequentially based on the order they appear), *position-relative symbols* (symbols are assigned to encode the relative position of the sender with respect ot the receiver), and *symbolic attention* (symbols are retrieved via attention from a library of learned symbols).
+
+This motivates a variant of attention which we call *relational cross-attention*. Relational cross-attention forms the core of the *Abstractor* module. The Abstractor processes a sequence of objects to produce a sequence of "abstract embeddings" which encode the relational features among its input.
+
+Please see the paper for the details.
 
 ## Experiments
 
 We evaluate our proposed architecture on... . Please see the paper for a description of the tasks and the experimental set up. We include a preview of the results here.
 
+[TODO]
 
 ## Experiment Logs
 
 Detailed experimental logs are publicly available. They include training and validation metrics tracked during training, test metrics after training, code/git state, resource utilization, etc.
 
+
+[TODO]
 
 ## Citation
 
