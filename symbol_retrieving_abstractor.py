@@ -1,10 +1,14 @@
+"""
+Implements an Abstractor module with symbols assigned to each object via symbolic attention.
+
+Symbolic attention retrieves a symbol from a library of learned symbols via attention.
+The retrieved symbols are then used in relational cross-attention (instead of positional symbols).
+"""
+
 import tensorflow as tf
 from abstracters import RelationalAbstracterLayer
 from transformer_modules import AddPositionalEmbedding
 import numpy as np
-
-# TODO: decide on how to integrate this into code-base and name of module
-# maybe just integrate into abstracters.py?
 
 class SymbolRetrievingAbstractor(tf.keras.layers.Layer):
     """
@@ -172,7 +176,10 @@ class MultiHeadSymbolRetriever(tf.keras.layers.Layer):
         ], axis=-1)
         return retrieved_symbols
 
-# TODO: decide on symbol-retriever architecture and name
+# The implementation above learns the "relational templates" as parameters of the model directly along with the symbols
+# and performs attention 'manually'.
+# The alternative implementation below only learns the symbols and uses MultiHeadAttention to perform symbol retrieval.
+# The relational templates are then given by a linear projection of the symbols.
 class MultiHeadSymbolRetrieval2(tf.keras.layers.Layer):
     def __init__(self, n_heads, n_symbols, symbol_dim, binding_dim=None, use_bias=False, symbol_initializer='random_normal', **kwargs):
         super(MultiHeadSymbolRetrieval2, self).__init__(**kwargs)
