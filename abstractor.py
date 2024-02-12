@@ -1,9 +1,14 @@
+"""
+This is an implementation of the Abstractor module which does not use tensorflow's MultiHeadAttention implementation.
+Instead it uses the `multi_head_relation.py`. This allows some flexibility but at the cost of performance.
+We later forked and modified tensorflow's implementation of MultiHeadAttention to add the flexibility we wanted
+(e.g., to use a different relation activation function than softmax), which makes this implementation unnecessary.
+"""
+
 import tensorflow as tf
 from tensorflow.keras import layers
 from multi_head_relation import MultiHeadRelation
 from transformer_modules import GlobalSelfAttention, create_positional_encoding, FeedForward
-
-# TODO: add feedforward layers after message-passing (like RelationalAbstracter)
 
 class Abstractor(tf.keras.layers.Layer):
     def __init__(self,
