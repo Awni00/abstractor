@@ -101,15 +101,15 @@ class AutoregressiveAbstractor(tf.keras.Model):
             self.encoder = Encoder(**encoder_kwargs, name='encoder')
 
         # initialize the abstractor based on requested type
-        if abstractor_type == 'abstractor':
+        if abstractor_type == 'abstractor': # a 'simpler' abstractor without tensorflow's implementation of MHA (uses positional symbols)
             self.abstractor = Abstractor(**abstractor_kwargs, name='abstractor')
-        elif abstractor_type == 'relational':
+        elif abstractor_type == 'relational': # an implementation which uses tensorflow's MHA (uses positional symbols)
             self.abstractor = RelationalAbstracter(**abstractor_kwargs, name='abstractor')
-        elif abstractor_type == 'symbol-retrieving':
+        elif abstractor_type == 'symbol-retrieving': # an abstractor with symbol-retrieval via symbolic attention
             self.abstractor = SymbolRetrievingAbstractor(**abstractor_kwargs, name='abstractor')
-        elif abstractor_type == 'syntactic':
+        elif abstractor_type == 'syntactic': # an experimental variant
             self.abstractor = SyntacticAbstractor(**abstractor_kwargs, name='abstractor')
-        elif abstractor_type == 'symbolic':
+        elif abstractor_type == 'symbolic': # another experimental variant
             self.abstractor = SymbolicAbstracter(**abstractor_kwargs, name='abstractor')
         else:
             raise ValueError(f'unexpected `abstracter_type` argument {abstractor_type}')
