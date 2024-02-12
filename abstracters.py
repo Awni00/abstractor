@@ -1,21 +1,19 @@
 """
-Module Implementing different variants of the 'abstracter'.
+Module Implementing the 'abstracter' (RelationalAbstracter).
+
+We also implement an "ablation module" and an early experimental variant called SymbolicAbstracter.
 
 The abstracter is a module for transformer-based models which aims to encourage
 learning abstract relations.
 
 It is characterized by employing learned input-independent 'symbols' in its computation
-and using adjusted cross-attention mechanisms (e.g.: relational attention).
-
-Typically, an abstracter module follows an 'encoder'.
-For Seq2Seq models, it may be followed by a decoder.
+and using an attention mechanism which enforced the representation of purely relational
+information.
 """
 
 import tensorflow as tf
 from transformer_modules import AddPositionalEmbedding, FeedForward
 from attention import GlobalSelfAttention, BaseAttention, RelationalAttention, SymbolicAttention, CrossAttention
-
-
 
 class RelationalAbstracter(tf.keras.layers.Layer):
     """
@@ -160,6 +158,8 @@ class RelationalAbstracterLayer(tf.keras.layers.Layer):
 
     return symbols
 
+# The SymbolicAbstracter is an early experimental variant.
+# It does not appear in the paper. We leave it here for reference.
 class SymbolicAbstracter(tf.keras.layers.Layer):
     """
     A variant of an 'Abstractor' module early in development.
