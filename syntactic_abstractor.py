@@ -1,3 +1,11 @@
+"""
+This module implements what we called a 'Syntactic Abstractor'. This is an experiment that we ran which didn't make it into the paper.
+
+This module retrieves a symbol for each input via "symbolic attention" then performs self-attention on the retrieved symbols.
+I.e., it is a mix between an Abstractor and an Encoder. There is no relational cross-attention, but there are 'symbols'.
+This didn't work especially well in our experiments.
+"""
+
 import tensorflow as tf
 from transformer_modules import EncoderLayer, AddPositionalEmbedding
 from symbol_retrieving_abstractor import MultiHeadSymbolRetriever, MultiHeadSymbolRetrieval2
@@ -19,7 +27,7 @@ class SyntacticAbstractor(tf.keras.layers.Layer):
         symbol_n_heads=1,
         symbol_binding_dim=None,
         add_pos_embedding=True,
-        symbol_retriever_type=1, # NOTE / TODO TEMPORARY
+        symbol_retriever_type=1, # there are two implementations; which one to use.
         dropout_rate=0.1,
         **kwargs):
         """
@@ -39,6 +47,8 @@ class SyntacticAbstractor(tf.keras.layers.Layer):
             dimension of binding symbols, by default None
         add_pos_embedding : bool, optional
             whether to add positional embeddings to symbols after retrieval, by default True
+        symbol_retriever_type : int, optional
+            type of symbol retriever, by default 1.
         dropout_rate : float, optional
             dropout rate, by default 0.1
         **kwargs : dict
@@ -59,7 +69,6 @@ class SyntacticAbstractor(tf.keras.layers.Layer):
 
         # NOTE: we choose symbol_dim to be the same as d_model
         # this is required for residual connection to work
-        # TODO think about whether this should be adjusted...
 
     def build(self, input_shape):
 
