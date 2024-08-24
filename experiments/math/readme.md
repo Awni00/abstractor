@@ -15,8 +15,8 @@ The complete logs of our experiments are available at the links below:
 
 | Task                        	| Experimental logs                                        	|
 |-----------------------------	|----------------------------------------------------------	|
-| calculus__differentiate     	| https://wandb.ai/awni00/math-calculus__differentiate     	|
-| algebra__sequence_next_term 	| https://wandb.ai/awni00/math-algebra__sequence_next_term 	|
-| algebra__linear_1d          	| https://wandb.ai/awni00/math-algebra__linear_1d          	|
-| polynomials__expand         	| https://wandb.ai/awni00/math-polynomials__expand         	|
-| polynomials__add            	| https://wandb.ai/awni00/math-polynomials__add            	|
+| calculus__differentiate     	| https://wandb.ai/abstractor/math-calculus__differentiate     	|
+| algebra__sequence_next_term 	| https://wandb.ai/abstractor/math-algebra__sequence_next_term 	|
+| algebra__linear_1d          	| https://wandb.ai/abstractor/math-algebra__linear_1d          	|
+| polynomials__expand         	| https://wandb.ai/abstractor/math-polynomials__expand         	|
+| polynomials__add            	| https://wandb.ai/abstractor/math-polynomials__add            	|

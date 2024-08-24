@@ -19,4 +19,4 @@ Steps to reproduce experiments:
 
 3) Plotting and analyzing learning curves is done in `learning_curve_analysis.ipynb`
 
-Our experiments used the parameters above. The complete logs of our runs are available to view at: [W&B project link](https://wandb.ai/awni00/object_argsort_autoregressive?workspace=user-awni00).
+Our experiments used the parameters above. The complete logs of our runs are available to view at: [W&B project link](https://wandb.ai/abstractor/object_argsort_autoregressive?workspace=user-awni00).

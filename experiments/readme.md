@@ -16,4 +16,4 @@ For all experiments, you can replicate our python environment by using the `cond
 conda env create -f conda_environment.yml
 ```
 
-Many experiments have their complete logs available publicly on the "Weights and Biases" platform. For each run/trial, this includes metrics tracked over the course of training, the version of the code (git commit ID), the exact script that produced the run and its arguments, the hardware on which it was run, etc... See the readme associated with each experiment for the link to that experiment's logs.
+Many experiments have their complete logs available publicly on the "Weights and Biases" platform. For each run/trial, this includes metrics tracked over the course of training, the version of the code (git commit ID), the exact script that produced the run and its arguments, the hardware on which it was run, etc... The following landing page links to the experimental logs of all experiments: https://wandb.ai/abstractor/projects. See the readme associated with each experiment for the link to that experiment's logs.

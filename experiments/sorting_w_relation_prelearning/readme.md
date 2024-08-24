@@ -17,4 +17,4 @@ Steps to replicate results:
 
 In step 3, `'end-to-end'` trains the model described above end-to-end on the task. `'use-rel-model'` pre-trains on the pairwise order relation subtask and initializes the Embedder and Abstractor weights from that subtask when evaluating learning curves. `'use-rel-model-decoder'` initializes the Embedder and Abstractor in the same way, but also initializes the Decoder by pre-training on an independently generated full sorting task. We observe modularity in the form of accelerated learning curves when pre-learning the relations in this way.
 
-The complete logs of our runs are available to view at: [W&B project link](https://wandb.ai/awni00/object_sorting_with_relation_prelearning).
+The complete logs of our runs are available to view at: [W&B project link](https://wandb.ai/abstractor/object_sorting_with_relation_prelearning).
