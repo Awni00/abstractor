@@ -80,7 +80,7 @@ Awni Altabaa<sup>1</sup>, Taylor Webb<sup>2</sup>, Jonathan Cohen<sup>3</sup>, J
     <a href="https://github.com/awni00/abstractor/" class="btn" target="_blank">
     <span class="material-symbols-outlined">code</span>&nbsp;Code&nbsp;
     </a>
-    <a href="https://wandb.ai/abstractor/projects" class="btn">
+    <a href="https://wandb.ai/abstractor/projects" class="btn" target="_blank">
     <span class="material-symbols-outlined">experiment</span>&nbsp;Experimental Logs&nbsp;
     </a>
 </div>
