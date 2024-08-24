@@ -149,7 +149,7 @@ Please see the paper for details on these experiments.
 
 ## Experiment Logs
 
-Detailed experimental logs are publicly available to help promote reproducibility and transparency. They include training and validation metrics tracked during training, test metrics after training, code/git state, resource utilization, etc. Experimental logs for all experiments in the paper can be accessed through the following <a href = https://wandb.ai/abstractor/projects>web portal</a>.
+Detailed experimental logs are publicly available to help promote reproducibility and transparency. They include training and validation metrics tracked during training, test metrics after training, code/git state, resource utilization, etc. Experimental logs for all experiments in the paper can be accessed through the following <a href = "https://wandb.ai/abstractor/projects">web portal</a>.
 
 ## Citation
 
