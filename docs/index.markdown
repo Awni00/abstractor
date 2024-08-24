@@ -80,7 +80,7 @@ Awni Altabaa<sup>1</sup>, Taylor Webb<sup>2</sup>, Jonathan Cohen<sup>3</sup>, J
     <a href="https://github.com/awni00/abstractor/" class="btn" target="_blank">
     <span class="material-symbols-outlined">code</span>&nbsp;Code&nbsp;
     </a>
-    <a href="#experiment-logs" class="btn">
+    <a href="https://wandb.ai/abstractor/projects" class="btn">
     <span class="material-symbols-outlined">experiment</span>&nbsp;Experimental Logs&nbsp;
     </a>
 </div>
@@ -149,11 +149,7 @@ Please see the paper for details on these experiments.
 
 ## Experiment Logs
 
-Detailed experimental logs are publicly available. They include training and validation metrics tracked during training, test metrics after training, code/git state, resource utilization, etc.
-
-**Object-sorting experiments.** Instructions for reproducing our experiments can be found at [`this readme in the project repo`](https://github.com/Awni00/abstractor/tree/main/experiments/object_argsort_autoregressive). The experimental logs for the object-sorting experiments can be found [`here`](https://wandb.ai/awni00/object_argsort_autoregressive?workspace=user-awni00).
-
-**Math problem-solving.** Instructions for reproducing our experiments can be found at [`this readme in the project repo`](https://github.com/Awni00/abstractor/tree/main/experiments/math). The experimental logs for the each task in the math problem-solving experiments can be found here: [`calculus__differentiate`](https://wandb.ai/awni00/math-calculus__differentiate), [`algebra__sequence_next_term`](https://wandb.ai/awni00/math-algebra__sequence_next_term), [`algebra__linear_1d`](https://wandb.ai/awni00/math-algebra__linear_1d), [`polynomials__expand`](https://wandb.ai/awni00/math-polynomials__expand), and [`polynomials__add`](https://wandb.ai/awni00/math-polynomials__add).
+Detailed experimental logs are publicly available to help promote reproducibility and transparency. They include training and validation metrics tracked during training, test metrics after training, code/git state, resource utilization, etc. They can be accessed through the following web portal: https://wandb.ai/abstractor/projects
 
 ## Citation
 
